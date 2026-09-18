@@ -112,7 +112,7 @@ function App() {
                   {items.map((o, i) => (
                     <li
                       key={i}
-                      className="flex items-start justify-between gap-3 border-t border-slate-100 pt-3 first:border-t-0 first:pt-0"
+                      className="group relative -mx-2 flex items-start justify-between gap-3 rounded-md border-t border-slate-100 px-2 pt-3 transition-colors first:border-t-0 first:pt-0 hover:bg-slate-50"
                     >
                       <div className="min-w-0">
                         <p className="break-words text-slate-900">
@@ -132,6 +132,11 @@ function App() {
                           </span>
                         )}
                       </span>
+                      {o.product_desc && (
+                        <div className="pointer-events-none absolute top-full left-2 z-10 mt-1 w-64 max-w-[90vw] scale-95 rounded-md bg-slate-800 p-2 text-xs whitespace-pre-line text-white opacity-0 shadow-lg transition duration-150 group-hover:scale-100 group-hover:opacity-100">
+                          {o.product_desc}
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
