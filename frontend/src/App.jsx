@@ -21,6 +21,13 @@ function App() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  function handleClear() {
+    setQuery('')
+    setResults(null)
+    setMessage('')
+    setError('')
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     if (!query.trim()) return
@@ -76,6 +83,14 @@ function App() {
               className="shrink-0 whitespace-nowrap rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-indigo-500 disabled:opacity-50 sm:px-5"
             >
               {loading ? 'Searching…' : 'Search'}
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={loading}
+              className="shrink-0 whitespace-nowrap rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 sm:px-5"
+            >
+              Clear
             </button>
           </form>
 
