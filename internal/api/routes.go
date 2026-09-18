@@ -4,7 +4,7 @@ import "net/http"
 
 func RegisterRoutes(h *Handler) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /bunnpris/weekly", h.BunnprisWeekly)
+	mux.HandleFunc("GET /item", h.SingleItem)
 
 	return mux
 }

@@ -24,17 +24,31 @@ pricing and the remaining two chains later.
 
 ## Data sourcing (per store, not yet finalized for all)
 
-- **Rema1000 / Kiwi**: reverse-engineered store app APIs. Blocked for now —
-  Patrik needs to activate a Norwegian phone number to access the apps and
-  capture the API calls. Don't build against guessed/placeholder endpoints;
-  wait for real captured requests.
-- **Bunnpris**: no API decided yet — check for a public webshop/kundeavis
-  source before assuming reverse engineering is needed.
-- **Extra / Coop**: not investigated yet.
+- **Bunnpris / Rema1000 / Kiwi**: all three publish their weekly kundeavis
+  through **Tjek** (formerly eTilbudsavis/ShopGun), a third-party catalog
+  platform — `https://api.etilbudsavis.dk/v2/offers`, public, no auth
+  required. Retailers submit their catalog to Tjek (as a PDF Tjek
+  digitizes, or a structured feed), so this is legitimate published data,
+  not a reverse-engineered app endpoint — no ToS/legal concern like the
+  store apps would carry. Norwegian dealer IDs (found via
+  `/v2/dealers/search?query=<name>&r_lat=59.9139&r_lng=10.7522&r_radius=50000`
+  — the geolocation params matter, plain query search returns Danish
+  dealers first): Bunnpris `5b11sm`, Rema1000 `faa0Ym`, Kiwi `257bxm`.
+  Pagination is `offset`/`limit` (not `page`/`p`, which are silently
+  ignored), `limit` capped at 100 server-side. Implemented in
+  `internal/compute/tjek.go` (shared fetch/pagination) plus one file per
+  store (`bunnpris.go`, `rema1000.go`, `kiwi.go`) with just the dealer ID.
+  This makes the previous "reverse-engineered store app API, blocked on a
+  Norwegian phone number" plan unnecessary for these three chains.
+- **Extra / Coop**: not investigated yet — likely also on Tjek (Extra
+  `80742m` confirmed live during the Bunnpris/Rema1000/Kiwi check; Coop's
+  several sub-banners were spottier, worth re-checking before relying on
+  it).
 
 Since sourcing differs per store, keep each store's fetcher isolated (own
-package/file) behind a common interface, rather than assuming one scraping
-strategy fits all chains.
+file) behind a common interface, rather than assuming one scraping strategy
+fits all chains — even though Bunnpris/Rema1000/Kiwi happen to share Tjek as
+a backend, a future chain may not.
 
 ## Legal/monetization context
 
