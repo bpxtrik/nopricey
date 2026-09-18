@@ -10,6 +10,7 @@ type Offer struct {
 	ProductDesc string `json:"product_desc"`
 	Quantity string `json:"quantity"`
 	Price float64 `json:"price"`
+	PricePKU float64 `json:"price_per_kilo_unit"`
 }
 
 

@@ -45,6 +45,7 @@ func (h *Handler) SingleItem(w http.ResponseWriter, r *http.Request) {
 				ProductDesc: o.Description,
 				Price:       o.Pricing.Price,
 				Quantity:    qty,
+				PricePKU:    compute.ConvertToPricePerKiloUnit(o.Pricing.Price, qty),
 			})
 
 		}
