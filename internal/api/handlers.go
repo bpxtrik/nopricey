@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"nopricey/internal"
@@ -35,10 +34,10 @@ func (h *Handler) SingleItem(w http.ResponseWriter, r *http.Request) {
 	}
 	var results []internal.Offer
 	for store, offers := range qr {
-		fmt.Printf("%s:\n", store)
+		// fmt.Printf("%s:\n", store)
 		for _, o := range offers {
 			qty := compute.FormatQuantity(o)
-			fmt.Printf("  %s (%s) - %.2f %s\n", o.Heading, qty, o.Pricing.Price, o.Pricing.Currency)
+			// fmt.Printf("  %s (%s) - %.2f %s\n", o.Heading, qty, o.Pricing.Price, o.Pricing.Currency)
 			results = append(results, internal.Offer{
 				Store:       store,
 				ProductName: o.Heading,
