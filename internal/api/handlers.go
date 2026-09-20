@@ -7,11 +7,11 @@ import (
 	"nopricey/internal"
 	"nopricey/internal/compute"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"database/sql"
 )
 
 type Handler struct {
-	DB *pgxpool.Pool
+	DB *sql.DB
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"nopricey/internal/api"
+	"nopricey/internal/db"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,13 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
 	http.HandleFunc("/", homePage)
 
-	h := api.Handler{DB: nil}
+	db, err := db.New()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	h := api.Handler{DB: db}
 	mux := api.RegisterRoutes(&h)
 
 	http.ListenAndServe(":10000", http.Handler(mux))
