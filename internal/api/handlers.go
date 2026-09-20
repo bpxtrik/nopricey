@@ -6,6 +6,7 @@ import (
 
 	"nopricey/internal"
 	"nopricey/internal/compute"
+	"nopricey/internal/db"
 
 	"database/sql"
 )
@@ -49,6 +50,8 @@ func (h *Handler) SingleItem(w http.ResponseWriter, r *http.Request) {
 
 		}
 	}
+
+	db.InsertNewOffers(h.DB, "Bunnpris", qr["Bunnpris"])
 
 	writeJSON(w, 200, results)
 }
