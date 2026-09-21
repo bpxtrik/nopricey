@@ -2,7 +2,6 @@ package compute
 
 import (
 	"fmt"
-	"log"
 	"nopricey/internal/fetch"
 	"strings"
 )
@@ -16,19 +15,14 @@ var Stores = map[string]func() ([]fetch.TjekOffer, error){
 	"Extra": 	fetch.ExtraWeekly,
 }
 
-// FindOffers looks up query (matched case-insensitively against each
-// offer's heading/description) across every store in Stores, returning the
-// matching offers keyed by store name.
-func FindOffers(query string) map[string][]fetch.TjekOffer {
+// FilterOffers narrows all (as returned by db.GetCurrentOffers, keyed by
+// store name) down to offers whose heading or description contains query,
+// matched case-insensitively.
+func FilterOffers(all map[string][]fetch.TjekOffer, query string) map[string][]fetch.TjekOffer {
 	query = strings.ToLower(query)
 	results := make(map[string][]fetch.TjekOffer)
 
-	for store, fetch := range Stores {
-		offers, err := fetch()
-		if err != nil {
-			log.Println(store, "error:", err)
-			continue
-		}
+	for store, offers := range all {
 		for _, o := range offers {
 			if strings.Contains(strings.ToLower(o.Heading), query) || strings.Contains(strings.ToLower(o.Description), query) {
 				results[store] = append(results[store], o)

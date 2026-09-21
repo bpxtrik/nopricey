@@ -66,6 +66,46 @@ func CreateTable(db *sql.DB) (sql.Result, error) {
 	return db.Exec(schema)
 }
 
+// GetCurrentOffers returns every row of current_offers, keyed by store
+// name, in the same shape the store fetchers themselves return.
+func GetCurrentOffers(db *sql.DB) (map[string][]fetch.TjekOffer, error) {
+	rows, err := db.Query(`
+		SELECT store, heading, description, price, pre_price, currency, unit_symbol, size_from, size_to, run_from, run_till
+		FROM current_offers
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	results := make(map[string][]fetch.TjekOffer)
+	for rows.Next() {
+		var store, heading, description, currency, unitSymbol, runFrom, runTill string
+		var price, prePrice, sizeFrom, sizeTo float64
+
+		err := rows.Scan(&store, &heading, &description, &price, &prePrice,
+			&currency, &unitSymbol, &sizeFrom, &sizeTo, &runFrom, &runTill)
+		if err != nil {
+			return nil, err
+		}
+
+		o := fetch.TjekOffer{Heading: heading, Description: description, RunFrom: runFrom, RunTill: runTill}
+		o.Pricing.Price = price
+		o.Pricing.PrePrice = prePrice
+		o.Pricing.Currency = currency
+		o.Quantity.Unit.Symbol = unitSymbol
+		o.Quantity.Size.From = sizeFrom
+		o.Quantity.Size.To = sizeTo
+
+		results[store] = append(results[store], o)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
 // offerKey makes rows comparable
 func offerKey(heading, description string, price, prePrice float64, currency, unitSymbol string, sizeFrom, sizeTo float64, runFrom, runTill string) string {
 	return fmt.Sprintf("%s|%s|%.4f|%.4f|%s|%s|%.4f|%.4f|%s|%s",
