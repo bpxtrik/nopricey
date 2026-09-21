@@ -2,7 +2,7 @@ package internal
 
 import (
 	"database/sql"
-	"fmt"
+	"log"
 
 	"nopricey/internal/compute"
 	"nopricey/internal/db"
@@ -17,12 +17,13 @@ func FetchAndStoreAllOffers(database *sql.DB) {
 	for store, fetchOffers := range compute.Stores {
 		offers, err := fetchOffers()
 		if err != nil {
-			fmt.Println(store, "fetch error:", err.Error())
+			log.Println(store, "fetch error:", err.Error())
 			continue
 		}
+		log.Printf("%s: fetched %d offers", store, len(offers))
 
 		if err := db.InsertNewOffers(database, store, offers); err != nil {
-			fmt.Println(store, "insert error:", err.Error())
+			log.Println(store, "insert error:", err.Error())
 		}
 	}
 }

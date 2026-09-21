@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -10,7 +10,7 @@ func StartDailyCron(fn func()) {
 	go func() {
 		loc, err := time.LoadLocation("Europe/Oslo")
 		if err != nil {
-			fmt.Println("cron: falling back to UTC, couldn't load Europe/Oslo:", err.Error())
+			log.Println("cron: falling back to UTC, couldn't load Europe/Oslo:", err.Error())
 			loc = time.UTC
 		}
 
@@ -21,10 +21,17 @@ func StartDailyCron(fn func()) {
 				next = next.Add(24 * time.Hour)
 			}
 
+			log.Printf("cron: next run scheduled for %s", next.Format(time.RFC3339))
+
 			timer := time.NewTimer(next.Sub(now))
 			<-timer.C
 
+			log.Println("cron: run starting")
+			start := time.Now()
+
 			fn()
+
+			log.Printf("cron: run finished in %s", time.Since(start))
 		}
 	}()
 }

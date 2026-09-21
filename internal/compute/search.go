@@ -2,6 +2,7 @@ package compute
 
 import (
 	"fmt"
+	"log"
 	"nopricey/internal/fetch"
 	"strings"
 )
@@ -25,7 +26,7 @@ func FindOffers(query string) map[string][]fetch.TjekOffer {
 	for store, fetch := range Stores {
 		offers, err := fetch()
 		if err != nil {
-			fmt.Println(store, "error:", err)
+			log.Println(store, "error:", err)
 			continue
 		}
 		for _, o := range offers {

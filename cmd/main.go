@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"nopricey/internal"
@@ -10,7 +10,7 @@ import (
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Testing")
+	log.Println("Testing")
 }
 
 func handleRequests() {
@@ -18,7 +18,7 @@ func handleRequests() {
 
 	database, err := db.New()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
 
@@ -29,9 +29,10 @@ func handleRequests() {
 	h := api.Handler{DB: database}
 	mux := api.RegisterRoutes(&h)
 
-	http.ListenAndServe(":10000", http.Handler(mux))
+	http.ListenAndServe(":10000", api.LoggingMiddleware(mux))
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	handleRequests()
 }

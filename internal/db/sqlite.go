@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"slices"
 	"sort"
 
@@ -14,15 +15,15 @@ import (
 func New() (*sql.DB, error) {
 	db, err := sql.Open("sqlite", "./my.db")
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return nil, err
 	}
 
-	fmt.Println("Connected to DB")
+	log.Println("Connected to DB")
 
 	_, err = CreateTable(db)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return nil, err
 	}
 
@@ -125,7 +126,7 @@ func InsertNewOffers(db *sql.DB, store string, offers []fetch.TjekOffer) error {
 		return err
 	}
 	if !changed {
-		fmt.Println(store, "offers unchanged, skipping update")
+		log.Println(store, "offers unchanged, skipping update")
 		return nil
 	}
 
