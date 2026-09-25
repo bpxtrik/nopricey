@@ -22,6 +22,16 @@ func handleRequests() {
 		return
 	}
 
+	hasOffers, err := db.HasOffers(database)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	if !hasOffers {
+		log.Println("current_offers is empty, running initial fetch")
+		internal.FetchAndStoreAllOffers(database)
+	}
+
 	internal.StartDailyCron(func() {
 		internal.FetchAndStoreAllOffers(database)
 	})

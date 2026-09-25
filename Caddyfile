@@ -1,0 +1,11 @@
+nopricey.patrikbarsi.xyz {
+	handle /item* {
+		reverse_proxy app:10000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

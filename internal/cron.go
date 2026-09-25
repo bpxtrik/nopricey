@@ -16,6 +16,7 @@ func StartDailyCron(fn func()) {
 
 		for {
 			now := time.Now().In(loc)
+			// 3 am
 			next := time.Date(now.Year(), now.Month(), now.Day(), 3, 0, 0, 0, loc)
 			if !next.After(now) {
 				next = next.Add(24 * time.Hour)

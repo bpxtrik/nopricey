@@ -66,6 +66,15 @@ func CreateTable(db *sql.DB) (sql.Result, error) {
 	return db.Exec(schema)
 }
 
+// HasOffers reports whether current_offers has any rows at all — used at
+// startup to tell a freshly created DB (empty, e.g. first container run)
+// from one that already has data and can just wait for the next cron run.
+func HasOffers(db *sql.DB) (bool, error) {
+	var exists bool
+	err := db.QueryRow(`SELECT EXISTS(SELECT 1 FROM current_offers LIMIT 1)`).Scan(&exists)
+	return exists, err
+}
+
 // GetCurrentOffers returns every row of current_offers, keyed by store
 // name, in the same shape the store fetchers themselves return.
 func GetCurrentOffers(db *sql.DB) (map[string][]fetch.TjekOffer, error) {
@@ -207,5 +216,10 @@ func InsertNewOffers(db *sql.DB, store string, offers []fetch.TjekOffer) error {
 		}
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	log.Printf("%s: updated %d rows", store, len(offers))
+	return nil
 }
