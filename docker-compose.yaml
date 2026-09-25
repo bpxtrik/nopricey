@@ -4,6 +4,9 @@ services:
     volumes:
       - db_data:/data
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
 
   frontend:
     build: ./frontend
@@ -13,6 +16,9 @@ services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     ports:
       - "80:80"
       - "443:443"
